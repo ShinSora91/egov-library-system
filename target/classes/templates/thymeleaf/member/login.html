@@ -1,0 +1,27 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <title>로그인</title>
+  </head>
+  <body>
+    <h2>로그인</h2>
+
+    <div th:if="${errorMsg}" style="color: red" th:text="${errorMsg}"></div>
+    <div
+      th:if="${successMsg}"
+      style="color: green"
+      th:text="${successMsg}"
+    ></div>
+
+    <form th:action="@{/member/loginProcess}" method="post">
+      <div>
+        <label>아이디: <input type="text" name="memberId" /></label>
+      </div>
+      <div>
+        <label>비밀번호: <input type="password" name="memberPw" /></label>
+      </div>
+      <button type="submit">로그인</button>
+      <a th:href="@{/member/register}">회원가입</a>
+    </form>
+  </body>
+</html>
