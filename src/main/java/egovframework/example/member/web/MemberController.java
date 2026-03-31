@@ -1,5 +1,6 @@
 package egovframework.example.member.web;
 
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 
 
@@ -61,6 +64,50 @@ public class MemberController {
     @ResponseBody
     public boolean checkId(@RequestParam String memberId) {
         return memberService.isIdDuplicate(memberId);
+    }
+    
+    //내 정보 조회 페이지
+    @GetMapping("/myPage")
+    public String myPage(Model model) {
+        //현재 로그인한 사용자 아이디 가져오기
+        String memberId = SecurityContextHolder.getContext().getAuthentication().getName();
+        MemberVO member = memberService.getMemberById(memberId);
+        model.addAttribute("memberVO", member);
+        return "member/myPage";
+    }
+    
+    //회원 정보 수정 처리
+    @PostMapping("/update")
+    public String update(@ModelAttribute MemberVO memberVO, 
+                          RedirectAttributes redirectAttributes) {
+        String memberId = SecurityContextHolder.getContext().getAuthentication().getName();
+        memberVO.setMemberId(memberId);
+        memberService.updateMember(memberVO);
+        redirectAttributes.addFlashAttribute("successMsg", "회원 정보가 수정되었습니다.");        
+        return "redirect:/member/myPage";
+    }
+    
+    //비밀번호 변경 처리
+    @PostMapping("/updatePassword")
+    public String updatePassword(@RequestParam String currentPw,
+                                 @RequestParam String newPw,
+                                 @RequestParam String newPwConfirm,
+                                 RedirectAttributes redirectAttributes) {
+        //새 비밀번호 확인
+        if (!newPw.equals(newPwConfirm)) {
+            redirectAttributes.addFlashAttribute("pwErrorMsg", "새 비밀번호가 일치하지 않습니다.");
+            return "redirect:/member/myPage";
+        }
+
+        String memberId = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        boolean result = memberService.updatePassword(memberId, currentPw, newPw);
+        if (!result) {
+            redirectAttributes.addFlashAttribute("pwErrorMsg", "현재 비밀번호가 올바르지 않습니다.");
+            return "redirect:/member/myPage";
+        }
+        redirectAttributes.addFlashAttribute("pwSuccessMsg", "비밀번호가 변경되었습니다.");
+        return "redirect:/member/myPage";
     }
     
     

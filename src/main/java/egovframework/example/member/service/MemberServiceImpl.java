@@ -34,4 +34,25 @@ public class MemberServiceImpl implements MemberService{
         return memberMapper.selectMemberById(memberId);
     }
 
+    @Override
+    public void updateMember(MemberVO memberVO) {
+        memberMapper.updateMember(memberVO);
+    }
+
+    @Override
+    public boolean updatePassword(String membdrId, String currentPw, String newPw) {
+        //현재 비밀번호 확인
+        MemberVO member = memberMapper.selectMemberById(membdrId);
+
+        //입력한 현재 비밀번호와 DB의 암호화된 비밀번호 비교
+        if (!passwordEncoder.matches(currentPw, member.getMemberPw())) {
+            return false; //현재 비밀번호 틀림
+        }
+
+        //새 비밀번호 암호화 후 변경
+        member.setMemberPw(passwordEncoder.encode(newPw));
+        memberMapper.updatePassword(member);
+        return true;
+    }
+
 }

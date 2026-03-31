@@ -16,4 +16,10 @@ public interface MemberMapper {
 
     //로그인용 회원 조회
     MemberVO selectMemberById(@Param("memberId") String memberId);
+
+    //회원 정보 수정
+    void updateMember(MemberVO memberVO);
+
+    //비밀번호 변경
+    void updatePassword(MemberVO memberVO);
 }

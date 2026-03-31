@@ -1,0 +1,60 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <title>내 정보</title>
+  </head>
+  <body>
+    <h2>내 정보</h2>
+
+    <!--회원 정보 수정 폼-->
+    <div
+      th:if="${successMsg}"
+      style="color: green"
+      th:text="${successMsg}"
+    ></div>
+
+    <form th:action="@{/member/update}" method="post" th:object="${memberVO}">
+      <div>
+        <label
+          >아이디: <input type="text" th:value="*{memberId}" readonly
+        /></label>
+      </div>
+      <div>
+        <label>이름: <input type="text" th:value="*{memberName}" /></label>
+      </div>
+      <div>
+        <label>주소: <input type="text" th:value="*{memberAddr}" /></label>
+      </div>
+      <div>
+        <label>연락처: <input type="text" th:value="*{memberTel}" /></label>
+      </div>
+      <button type="submit">정보 수정</button>
+    </form>
+
+    <hr />
+
+    <!--비밀번호 변경 폼-->
+    <h3>비밀번호 변경</h3>
+    <div th:if="${pwErrorMsg}" style="color: red" th:text="${pwErrorMsg}"></div>
+    <div
+      th:if="${pwSuccessMsg}"
+      style="color: green"
+      th:text="${pwSuccessMsg}"
+    ></div>
+
+    <form th:action="@{/member/updatePassword}" method="post">
+      <div>
+        <label>현재 비밀번호: <input type="password" name="currentPw" /></label>
+      </div>
+      <div>
+        <label>새 비밀번호: <input type="password" name="newPw" /></label>
+      </div>
+      <div>
+        <label
+          >새 비밀번호 확인: <input type="password" name="newPwConfirm"
+        /></label>
+      </div>
+      <button type="submit">비밀번호 변경</button>
+    </form>
+  </body>
+</html>

@@ -48,6 +48,22 @@
         FROM tb_member
         WHERE member_id = #{memberId}
     </select>
-    
+
+    <!--회원 정보 수정-->
+    <update id="updateMember" parameterType="egovframework.example.member.domain.MemberVO">
+        UPDATE tb_member
+        SET
+            member_name = #{memberName},
+            member_addr = #{memberAddr},
+            member_tel = #{memberTel},
+        WHERE member_id = #{memberId}
+    </update>
+
+    <!--비밀번호 변경-->
+    <update id="updatePassword" parameterType="egovframework.example.member.domain.MemberVO">
+        UPDATE tb_member
+        SET member_pw = #{memberPw}
+        WHERE member_id = #{memberId}
+    </update>
 </mapper>
 
