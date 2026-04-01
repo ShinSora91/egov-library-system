@@ -1,0 +1,60 @@
+<!doctype html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+>
+  <head>
+    <title>도서 목록</title>
+  </head>
+  <body>
+    <h2>도서 목록</h2>
+
+    <div
+      th:if="${successMsg}"
+      style="color: green"
+      th:text="${successMsg}"
+    ></div>
+
+    <!--관리자만 등록 버튼 표시-->
+    <a th:href="@{/book/register}" sec:authorize="hasRole('ADMIN')"
+      >도서 등록</a
+    >
+    <a th:href="@{/member/myPage}">내 정보</a>
+    <form th:action="@{/member/logout}" method="post">
+      <button type="submit">로그아웃</button>
+    </form>
+
+    <table border="1">
+      <tr>
+        <th>번호</th>
+        <th>도서명</th>
+        <th>저자</th>
+        <th>출판사</th>
+        <th>등록일</th>
+        <th sec:authorize="hasRole('ADMIN')">관리</th>
+      </tr>
+      <tr th:each="book : ${bookList}">
+        <td th:text="${book.bookNo}"></td>
+        <td th:text="${book.bookTitle}"></td>
+        <td th:text="${book.bookAuthor}"></td>
+        <td th:text="${book.bookPublisher}"></td>
+        <td th:text="${book.registDate}"></td>
+        <td sec:authorize="hasRole('ADMIN')">
+          <a th:href="@{/book/update/{bookNo}(bookNo=${book.bookNo})}">수정</a>
+          <form
+            th:action="@{/book/delete/{bookNo}(bookNo=${book.bookNo})}"
+            method="post"
+            style="display: inline"
+          >
+            <button
+              type="submit"
+              onclick="return confirm('삭제하시겠습니까?');"
+            >
+              삭제
+            </button>
+          </form>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

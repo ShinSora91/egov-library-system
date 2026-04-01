@@ -1,0 +1,23 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <title>도서 등록</title>
+  </head>
+  <body>
+    <h2>도서 등록</h2>
+
+    <form th:action="@{/book/register}" method="post" th:object="${bookVO}">
+      <div>
+        <label>도서명: <input type="text" th:field="*{bookTitle}" /></label>
+      </div>
+      <div>
+        <label>저자: <input type="text" th:field="*{bookAuthor}" /></label>
+      </div>
+      <div>
+        <label>출판사: <input type="text" th:field="*{bookPublisher}" /></label>
+      </div>
+      <button type="submit">등록</button>
+      <a th:href="@{/book/list}">취소</a>
+    </form>
+  </body>
+</html>
