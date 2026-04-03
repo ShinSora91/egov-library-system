@@ -2,9 +2,42 @@
 <html
   xmlns:th="http://www.thymeleaf.org"
   xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+  xmlns:egov="http://www.egovframe.go.kr/tags"
 >
   <head>
     <title>도서 목록</title>
+    <link rel="stylesheet" th:href="@{/css/pagination.css}" />
+    <style>
+      table {
+        width: 100%;
+        table-layout: fixed;
+        border-collapse: collapse;
+      }
+      th:nth-child(1) {
+        width: 5%;
+      } /* 번호 */
+      th:nth-child(2) {
+        width: 35%;
+      } /* 도서명 */
+      th:nth-child(3) {
+        width: 15%;
+      } /* 저자 */
+      th:nth-child(4) {
+        width: 15%;
+      } /* 출판사 */
+      th:nth-child(5) {
+        width: 20%;
+      } /* 등록일 */
+      th:nth-child(6) {
+        width: 10%;
+      } /* 관리 */
+
+      td {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+    </style>
   </head>
   <body>
     <h2>도서 목록</h2>
@@ -19,9 +52,37 @@
     <a th:href="@{/book/register}" sec:authorize="hasRole('ADMIN')"
       >도서 등록</a
     >
-    <a th:href="@{/member/myPage}">내 정보</a>
-    <form th:action="@{/member/logout}" method="post">
-      <button type="submit">로그아웃</button>
+
+    <!--검색 폼-->
+    <form th:action="@{/book/list}" method="get">
+      <select name="searchCondition">
+        <option
+          value="title"
+          th:selected="${bookVO.searchCondition == 'title'}"
+        >
+          도서명
+        </option>
+        <option
+          value="author"
+          th:selected="${bookVO.searchCondition == 'author'}"
+        >
+          저자
+        </option>
+        <option
+          value="publisher"
+          th:selected="${bookVO.searchCondition == 'publisher'}"
+        >
+          출판사
+        </option>
+      </select>
+      <input
+        type="text"
+        name="searchKeyword"
+        th:value="${bookVO.searchKeyword}"
+        placeholder="검색어를 입력하세요"
+      />
+      <button type="submit">검색</button>
+      <a th:href="@{/book/list}">초기화</a>
     </form>
 
     <table border="1">
@@ -56,5 +117,28 @@
         </td>
       </tr>
     </table>
+
+    <div
+      class="pagination"
+      th:utext="${#egovKrdsPaginationRenderer.renderPagination(paginationInfo, 'linkPage')}"
+    ></div>
+
+    <script>
+      function linkPage(pageNo) {
+        const searchCondition = document.querySelector(
+          'select[name="searchCondition"]',
+        ).value;
+        const searchKeyword = document.querySelector(
+          'input[name="searchKeyword"]',
+        ).value;
+        location.href =
+          "/book/list?pageIndex=" +
+          pageNo +
+          "&searchCondition=" +
+          searchCondition +
+          "&searchKeyword=" +
+          encodeURIComponent(searchKeyword);
+      }
+    </script>
   </body>
 </html>

@@ -64,7 +64,7 @@ public class EgovSampleController {
 	@Resource(name = "propertiesService")
 	private EgovPropertyService propertiesService;
 
-	@GetMapping("/")
+	@GetMapping("/sample")
 	public String index(@ModelAttribute("sampleVO") SampleVO sampleVO, ModelMap model) throws Exception {
 		return this.selectSampleList(sampleVO, model);
 	}

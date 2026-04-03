@@ -72,6 +72,11 @@ public class EgovConfigWeb implements WebMvcConfigurer, ApplicationContextAware 
 		return viewResolver;
 	}
 
+	@Bean
+	public EgovKrdsPaginationRenderer egovKrdsPaginationRenderer() {
+		return new EgovKrdsPaginationRenderer();
+	}
+
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
 		registry.addResourceHandler("/css/**").addResourceLocations("classpath:/static/css/");

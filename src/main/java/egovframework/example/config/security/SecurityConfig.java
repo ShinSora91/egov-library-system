@@ -19,7 +19,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/member/register", "/member/login", "/member/checkId", "/css/**", "/js/**").permitAll()
+                .requestMatchers("/", "/member/register", "/member/login", "/member/checkId", "/book/list", "/css/**", "/js/**").permitAll()
                 .requestMatchers("/book/register/**", "/book/update/**", "/book/delete/**").hasRole("ADMIN")
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
@@ -27,7 +27,7 @@ public class SecurityConfig {
             .formLogin(form -> form
                 .loginPage("/member/login")
                 .loginProcessingUrl("/member/loginProcess")
-                .defaultSuccessUrl("/book/list", true)
+                .defaultSuccessUrl("/", false)
                 .failureUrl("/member/login?error=true")
                 .usernameParameter("memberId")
                 .passwordParameter("memberPw")
@@ -35,7 +35,7 @@ public class SecurityConfig {
             )
             .logout(logout -> logout
                 .logoutUrl("/member/logout")
-                .logoutSuccessUrl("/member/login")
+                .logoutSuccessUrl("/")
                 .invalidateHttpSession(true)
             );
 
