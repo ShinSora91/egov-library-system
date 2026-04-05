@@ -1,0 +1,111 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <title>내 대출 목록</title>
+    <link rel="stylesheet" th:href="@{/css/pagination.css}" />
+    <style>
+      table {
+        width: 100%;
+        table-layout: fixed;
+        border-collapse: collapse;
+      }
+      th:nth-child(1) {
+        width: 5%;
+      }
+      th:nth-child(2) {
+        width: 30%;
+      }
+      th:nth-child(3) {
+        width: 15%;
+      }
+      th:nth-child(4) {
+        width: 15%;
+      }
+      th:nth-child(5) {
+        width: 15%;
+      }
+      th:nth-child(6) {
+        width: 10%;
+      }
+      th:nth-child(7) {
+        width: 10%;
+      }
+      td {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .status-loan {
+        color: blue;
+        font-weight: bold;
+      }
+      .status-returned {
+        color: gray;
+      }
+    </style>
+  </head>
+  <body>
+    <div th:replace="~{common/header :: header}"></div>
+
+    <h2>내 대출 목록</h2>
+
+    <div
+      th:if="${successMsg}"
+      style="color: green"
+      th:text="${successMsg}"
+    ></div>
+    <div th:if="${errorMsg}" style="color: red" th:text="${errorMsg}"></div>
+
+    <table border="1">
+      <tr>
+        <th>번호</th>
+        <th>도서명</th>
+        <th>저자</th>
+        <th>대출일</th>
+        <th>반납 예정일</th>
+        <th>상태</th>
+        <th>반납</th>
+      </tr>
+      <tr th:each="loan : ${loanList}">
+        <td th:text="${loan.loanNo}"></td>
+        <td th:text="${loan.bookTitle}"></td>
+        <td th:text="${loan.bookAuthor}"></td>
+        <td th:text="${loan.loanDate}"></td>
+        <td th:text="${loan.returnDueDate}"></td>
+        <td>
+          <span th:if="${loan.loanStatus == 'LOAN'}" class="status-loan"
+            >대출중</span
+          >
+          <span th:if="${loan.loanStatus == 'RETURNED'}" class="status-returned"
+            >반납완료</span
+          >
+        </td>
+        <td>
+          <form
+            th:if="${loan.loanStatus == 'LOAN'}"
+            th:action="@{/loan/return/{loanNo}(loanNo=${loan.loanNo})}"
+            method="post"
+          >
+            <button
+              type="submit"
+              onclick="return confirm('반납하시겠습니까?');"
+            >
+              반납
+            </button>
+          </form>
+        </td>
+      </tr>
+    </table>
+
+    <div
+      class="pagination"
+      th:utext="${#egovKrdsPaginationRenderer.renderPagination(paginationInfo, 'linkMyLoanPage')}"
+    ></div>
+
+    <script>
+      function linkMyLoanPage(pageNo) {
+        location.href = "/loan/myList?pageIndex=" + pageNo;
+      }
+    </script>
+  </body>
+</html>

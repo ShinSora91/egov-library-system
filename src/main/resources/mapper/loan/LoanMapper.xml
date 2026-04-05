@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="egovframework.example.loan.mapper.LoanMapper">
+
+    <!--대출 신청-->
+    <insert id="insertLoan" parameterType="egovframework.example.loan.domain.LoanVO">
+        INSERT INTO tb_loan (
+            member_id,
+            item_no,
+            loan_status,
+            loan_date,
+            return_due_date
+        ) VALUES (
+            #{memberId},
+            #{itemNo},
+            'LOAN',
+            NOW(),
+            DATE_ADD(NOW(), INTERVAL 14 DAY)
+        )
+    </insert>
+
+    <!--반납 처리-->
+    <update id="updateLoanReturn">
+        UPDATE tb_loan
+        SET
+            loan_status = 'RETURNED',
+            return_date = NOW()
+        WHERE loan_no = #{loanNo}
+    </update>
+
+    <!--대출 시 소장 도서 상태 변경 (AVAILABLE → LOANED)-->
+    <update id="updateItemStatusToLoaned">
+        UPDATE tb_book_item
+        SET item_status = 'LOANED'
+        WHERE item_no = #{itemNo}
+    </update>
+
+    <!--반납 시 소장 도서 상태 변경 (LOANED → AVAILABLE)-->
+    <update id="updateItemStatusByLoanNo">
+        UPDATE tb_book_item
+        SET item_status = 'AVAILABLE'
+        WHERE item_no = (
+            SELECT item_no FROM tb_loan WHERE loan_no = #{loanNo}
+        )
+    </update>
+
+    <!--대출 가능한 아이템 번호 조회-->
+    <select id="selectAvailableItemNo" resultType="Integer">
+        SELECT item_no
+        FROM tb_book_item
+        WHERE book_no = #{bookNo}
+        AND item_status = 'AVAILABLE'
+        AND delete_yn = 'N'
+        LIMIT 1
+    </select>
+
+    <!--내 대출 목록-->
+    <select id="selectMyLoanList" resultType="egovframework.example.loan.domain.LoanVO">
+        SELECT
+            l.loan_no,
+            l.member_id,
+            l.item_no,
+            l.loan_status,
+            l.loan_date,
+            l.return_due_date,
+            l.return_date,
+            b.book_no,
+            b.book_title,
+            b.book_author,
+            b.book_publisher
+        FROM tb_loan l
+        JOIN tb_book_item i ON l.item_no = i.item_no
+        JOIN tb_book b ON i.book_no = b.book_no
+        WHERE l.member_id = #{memberId}
+        ORDER BY l.loan_date DESC
+        LIMIT #{firstIndex}, #{pageUnit}
+    </select>
+
+    <!--내 대출 총 개수-->
+    <select id="selectMyLoanListToCnt" resultType="int">
+        SELECT COUNT(*)
+        FROM tb_loan
+        WHERE member_id = #{memberId}
+    </select>
+
+    <!--현재 대출 중인 권수-->
+    <select id="selectMyActiveLoanCnt" resultType="int">
+        SELECT COUNT(*)
+        FROM tb_loan
+        WHERE member_id = #{memberId}
+        AND loan_status = 'LOAN'
+    </select>
+
+    <!--중복 대출 방지-->
+    <select id="selectDuplicateLoanCnt" resultType="int">
+        SELECT COUNT(*)
+        FROM tb_loan l
+        JOIN tb_book_item i ON l.item_no = i.item_no
+        WHERE l.member_id = #{memberId}
+        AND i.book_no = #{bookNo}
+        AND l.loan_status = 'LOAN'
+    </select>
+
+    <!--관리자 전체 대출 목록-->
+    <select id="selectAllLoanList" resultType="egovframework.example.loan.domain.LoanVO">
+        SELECT
+            l.loan_no,
+            l.member_id,
+            l.item_no,
+            l.loan_status,
+            l.loan_date,
+            l.return_due_date,
+            l.return_date,
+            b.book_no,
+            b.book_title,
+            b.book_author,
+            b.book_publisher,
+            m.member_name
+        FROM tb_loan l
+        JOIN tb_book_item i ON l.item_no = i.item_no
+        JOIN tb_book b ON i.book_no = b.book_no
+        JOIN tb_member m ON l.member_id = m.member_id
+        WHERE 1=1
+        <if test="searchKeyword != null and searchKeyword != ''">
+            <choose>
+                <when test="searchCondition == 'memberId'">
+                    AND l.member_id LIKE CONCAT('%', #{searchKeyword}, '%')
+                </when>
+                <when test="searchCondition == 'bookTitle'">
+                    AND b.book_title LIKE CONCAT('%', #{searchKeyword}, '%')
+                </when>
+            </choose>
+        </if>
+        ORDER BY l.loan_date DESC
+        LIMIT #{firstIndex}, #{pageUnit}
+    </select>
+
+    <!--관리자 전체 대출 총 개수-->
+    <select id="selectAllLoanListToCnt" resultType="int">
+        SELECT COUNT(*)
+        FROM tb_loan l
+        JOIN tb_book_item i ON l.item_no = i.item_no
+        JOIN tb_book b ON i.book_no = b.book_no
+        WHERE 1=1
+        <if test="searchKeyword != null and searchKeyword != ''">
+            <choose>
+                <when test="searchCondition == 'memberId'">
+                    AND l.member_id LIKE CONCAT('%', #{searchKeyword}, '%')
+                </when>
+                <when test="searchCondition == 'bookTitle'">
+                    AND b.book_title LIKE CONCAT('%', #{searchKeyword}, '%')
+                </when>
+            </choose>
+        </if>
+    </select>
+
+</mapper>

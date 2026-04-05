@@ -17,7 +17,8 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 @MapperScan(basePackages={
 	"egovframework.example.sample.service.impl",
 	"egovframework.example.member.mapper",
-	"egovframework.example.book.mapper"
+	"egovframework.example.book.mapper",
+	"egovframework.example.loan.mapper"
 })
 public class EgovConfigMapper {
 

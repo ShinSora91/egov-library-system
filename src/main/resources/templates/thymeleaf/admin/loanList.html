@@ -1,0 +1,127 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <title>대출 현황 (관리자)</title>
+    <link rel="stylesheet" th:href="@{/css/pagination.css}" />
+    <style>
+      table {
+        width: 100%;
+        table-layout: fixed;
+        border-collapse: collapse;
+      }
+      th:nth-child(1) {
+        width: 5%;
+      }
+      th:nth-child(2) {
+        width: 12%;
+      }
+      th:nth-child(3) {
+        width: 25%;
+      }
+      th:nth-child(4) {
+        width: 13%;
+      }
+      th:nth-child(5) {
+        width: 15%;
+      }
+      th:nth-child(6) {
+        width: 15%;
+      }
+      th:nth-child(7) {
+        width: 15%;
+      }
+      td {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .status-loan {
+        color: blue;
+        font-weight: bold;
+      }
+      .status-returned {
+        color: gray;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>대출 현황</h2>
+    <a th:href="@{/admin}">← 대시보드</a>
+
+    <form th:action="@{/admin/loans}" method="get">
+      <select name="searchCondition">
+        <option
+          value="memberId"
+          th:selected="${loanVO.searchCondition == 'memberId'}"
+        >
+          회원 아이디
+        </option>
+        <option
+          value="bookTitle"
+          th:selected="${loanVO.searchCondition == 'bookTitle'}"
+        >
+          도서명
+        </option>
+      </select>
+      <input
+        type="text"
+        name="searchKeyword"
+        th:value="${loanVO.searchKeyword}"
+        placeholder="검색어를 입력하세요"
+      />
+      <button type="submit">검색</button>
+      <a th:href="@{/admin/loans}">초기화</a>
+    </form>
+
+    <table border="1">
+      <tr>
+        <th>번호</th>
+        <th>회원 아이디</th>
+        <th>도서명</th>
+        <th>회원명</th>
+        <th>대출일</th>
+        <th>반납 예정일</th>
+        <th>상태</th>
+      </tr>
+      <tr th:each="loan : ${loanList}">
+        <td th:text="${loan.loanNo}"></td>
+        <td th:text="${loan.memberId}"></td>
+        <td th:text="${loan.bookTitle}"></td>
+        <td th:text="${loan.memberName}"></td>
+        <td th:text="${loan.loanDate}"></td>
+        <td th:text="${loan.returnDueDate}"></td>
+        <td>
+          <span th:if="${loan.loanStatus == 'LOAN'}" class="status-loan"
+            >대출중</span
+          >
+          <span th:if="${loan.loanStatus == 'RETURNED'}" class="status-returned"
+            >반납완료</span
+          >
+        </td>
+      </tr>
+    </table>
+
+    <div
+      class="pagination"
+      th:utext="${#egovKrdsPaginationRenderer.renderPagination(paginationInfo, 'linkAdminLoanPage')}"
+    ></div>
+
+    <script>
+      function linkAdminLoanPage(pageNo) {
+        const searchCondition = document.querySelector(
+          'select[name="searchCondition"]',
+        ).value;
+        const searchKeyword = document.querySelector(
+          'input[name="searchKeyword"]',
+        ).value;
+        location.href =
+          "/admin/loans?pageIndex=" +
+          pageNo +
+          "&searchCondition=" +
+          searchCondition +
+          "&searchKeyword=" +
+          encodeURIComponent(searchKeyword);
+      }
+    </script>
+  </body>
+</html>

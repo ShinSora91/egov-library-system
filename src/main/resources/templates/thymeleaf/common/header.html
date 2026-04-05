@@ -17,6 +17,7 @@
           <!-- 로그인 -->
           <div sec:authorize="isAuthenticated()">
             <a class="btn" th:href="@{/member/myPage}">마이페이지</a>
+            <a class="btn" th:href="@{/loan/myList}">내 대출 목록</a>
             <a class="btn" sec:authorize="hasRole('ADMIN')" th:href="@{/admin}"
               >관리자 페이지</a
             >

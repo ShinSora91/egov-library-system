@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import egovframework.example.book.domain.BookVO;
 import egovframework.example.book.service.BookService;
+import egovframework.example.loan.domain.LoanVO;
+import egovframework.example.loan.service.LoanService;
 import egovframework.example.member.domain.MemberVO;
 import egovframework.example.member.service.MemberService;
 import jakarta.annotation.Resource;
@@ -34,6 +36,7 @@ public class AdminController {
 
     private final BookService bookService;
     private final MemberService memberService;
+    private final LoanService loanService;
 
     //관리자 메인 (대시보드)
     @GetMapping("")
@@ -145,5 +148,32 @@ public class AdminController {
         bookService.deleteBook(bookNo);
         redirectAttributes.addFlashAttribute("successMsg", "도서가 삭제되었습니다.");
         return "redirect:/admin/books";
+    }
+
+    //전체 대출 현황
+    @GetMapping("/loans")
+    public String loanList(@ModelAttribute LoanVO loanVO, Model model) {
+        loanVO.setPageUnit(propertiesService.getInt("pageUnit"));
+    loanVO.setPageSize(propertiesService.getInt("pageSize"));
+
+    PaginationInfo paginationInfo = new PaginationInfo();
+    paginationInfo.setCurrentPageNo(loanVO.getPageIndex());
+    paginationInfo.setRecordCountPerPage(loanVO.getPageUnit());
+    paginationInfo.setPageSize(loanVO.getPageSize());
+
+    loanVO.setFirstIndex(paginationInfo.getFirstRecordIndex());
+    loanVO.setLastIndex(paginationInfo.getLastRecordIndex());
+    loanVO.setRecordCountPerPage(paginationInfo.getRecordCountPerPage());
+
+    int toCnt = loanService.getAllLoanListToCnt(loanVO);
+    paginationInfo.setTotalRecordCount(toCnt);
+
+    List<LoanVO> loanList = loanService.getAllLoanList(loanVO);
+    
+    model.addAttribute("loanList", loanList);
+    model.addAttribute("paginationInfo", paginationInfo);
+    model.addAttribute("loanVO", loanVO);
+
+    return "admin/loanList";
     }
 }

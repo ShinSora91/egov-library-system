@@ -1,0 +1,107 @@
+이제 뷰 파일들 만들게요! 1단계 - 도서 상세 페이지 (book/detail.html)
+templates/thymeleaf/book/detail.html 생성: html<!doctype html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+>
+  <head>
+    <title>도서 상세</title>
+    <style>
+      .detail-wrap {
+        margin: 20px 0;
+      }
+      .detail-wrap dl {
+        display: flex;
+        flex-wrap: wrap;
+        border-top: 1px solid #ddd;
+      }
+      .detail-wrap dt {
+        width: 120px;
+        font-weight: bold;
+        padding: 10px;
+        border-bottom: 1px solid #ddd;
+      }
+      .detail-wrap dd {
+        width: calc(100% - 120px);
+        padding: 10px;
+        border-bottom: 1px solid #ddd;
+      }
+      .btn-wrap {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+      }
+      .btn {
+        padding: 7px 15px;
+        text-decoration: none;
+        border: 1px solid #333;
+        color: #333;
+        background: white;
+        cursor: pointer;
+      }
+      .btn-primary {
+        background: #333;
+        color: white;
+      }
+      .btn:hover {
+        opacity: 0.8;
+      }
+    </style>
+  </head>
+  <body>
+    <div th:replace="~{common/header :: header}"></div>
+
+    <h2>도서 상세</h2>
+
+    <div
+      th:if="${successMsg}"
+      style="color: green"
+      th:text="${successMsg}"
+    ></div>
+    <div th:if="${errorMsg}" style="color: red" th:text="${errorMsg}"></div>
+
+    <div class="detail-wrap">
+      <dl>
+        <dt>도서명</dt>
+        <dd th:text="${bookVO.bookTitle}"></dd>
+        <dt>저자</dt>
+        <dd th:text="${bookVO.bookAuthor}"></dd>
+        <dt>출판사</dt>
+        <dd th:text="${bookVO.bookPublisher}"></dd>
+        <dt>등록일</dt>
+        <dd th:text="${bookVO.registDate}"></dd>
+        <dt>대출 가능</dt>
+        <dd
+          th:text="${bookVO.availableStock} + '/' + ${bookVO.totalStock} + ' 권'"
+        ></dd>
+      </dl>
+    </div>
+
+    <div class="btn-wrap">
+      <!--로그인한 일반 사용자에게만 대출 신청 버튼 표시-->
+      <form
+        sec:authorize="isAuthenticated()"
+        th:action="@{/loan/request}"
+        method="post"
+      >
+        <input type="hidden" name="bookNo" th:value="${bookVO.bookNo}" />
+        <button
+          class="btn btn-primary"
+          type="submit"
+          th:disabled="${bookVO.availableStock == 0}"
+          th:text="${bookVO.availableStock == 0} ? '대출 불가' : '대출 신청'"
+        ></button>
+      </form>
+
+      <!--비로그인 시 로그인 유도-->
+      <a
+        sec:authorize="isAnonymous()"
+        class="btn btn-primary"
+        th:href="@{/member/login}"
+        >로그인 후 대출 신청</a
+      >
+
+      <a class="btn" th:href="@{/book/list}">목록으로</a>
+    </div>
+  </body>
+</html>

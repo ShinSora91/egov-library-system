@@ -101,7 +101,12 @@
       </tr>
       <tr th:each="book : ${bookList}">
         <td th:text="${book.bookNo}"></td>
-        <td th:text="${book.bookTitle}"></td>
+        <td>
+          <a
+            th:href="@{/book/detail/{bookNo}(bookNo=${book.bookNo})}"
+            th:text="${book.bookTitle}"
+          ></a>
+        </td>
         <td th:text="${book.bookAuthor}"></td>
         <td th:text="${book.bookPublisher}"></td>
       </tr>
