@@ -20,7 +20,11 @@
   <body>
     <h2>도서 등록</h2>
 
-    <form th:action="@{/book/register}" method="post" th:object="${bookVO}">
+    <form
+      th:action="@{/admin/books/register}"
+      method="post"
+      th:object="${bookVO}"
+    >
       <div class="form-group">
         <label>도서명:</label>
         <input type="text" th:field="*{bookTitle}" />
@@ -34,7 +38,7 @@
         <input type="text" th:field="*{bookPublisher}" />
       </div>
       <button type="submit">등록</button>
-      <a th:href="@{/book/list}">취소</a>
+      <a th:href="@{/admin/books}">취소</a>
     </form>
   </body>
 </html>

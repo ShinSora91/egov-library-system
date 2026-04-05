@@ -6,10 +6,6 @@
   <head>
     <title>도서 대출 관리 시스템</title>
     <style>
-      body {
-        font-family: sans-serif;
-        margin: 20px;
-      }
       .header {
         display: flex;
         justify-content: space-between;
@@ -36,28 +32,8 @@
     </style>
   </head>
   <body>
-    <div class="header">
-      <h2>📚 도서 대출 관리 시스템</h2>
-      <!-- 비로그인 상태 -->
-      <div sec:authorize="isAnonymous()">
-        <a class="btn" th:href="@{/member/login}">로그인</a>
-        <a class="btn" th:href="@{/member/register}">회원가입</a>
-      </div>
+    <div th:replace="~{common/header :: header}"></div>
 
-      <!--로그인 상태-->
-      <div sec:authorize="isAuthenticated()">
-        <a class="btn" th:href="@{/member/myPage}">마이페이지</a>
-        <form
-          th:action="@{/member/logout}"
-          method="post"
-          style="display: inline"
-        >
-          <button class="btn" type="submit">로그아웃</button>
-        </form>
-      </div>
-    </div>
-
-    <!-- 도서 목록으로 바로 이동 -->
     <div>
       <a th:href="@{/book/list}">📖 도서 목록 보기</a>
     </div>

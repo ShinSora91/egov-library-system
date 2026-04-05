@@ -1,0 +1,111 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <title>회원 목록 (관리자)</title>
+    <link rel="stylesheet" th:href="@{/css/pagination.css}" />
+    <style>
+      table {
+        width: 100%;
+        table-layout: fixed;
+        border-collapse: collapse;
+      }
+      th:nth-child(1) {
+        width: 12%;
+      } /* 아이디 */
+      th:nth-child(2) {
+        width: 10%;
+      } /* 이름 */
+      th:nth-child(3) {
+        width: 13%;
+      } /* 연락처 */
+      th:nth-child(4) {
+        width: 30%;
+      } /* 주소 */
+      th:nth-child(5) {
+        width: 8%;
+      } /* 권한 */
+      th:nth-child(6) {
+        width: 17%;
+      } /* 가입일 */
+      th:nth-child(7) {
+        width: 10%;
+      } /* 탈퇴여부 */
+
+      td {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>회원 목록</h2>
+    <a th:href="@{/admin}">← 대시보드</a>
+
+    <form th:action="@{/admin/members}" method="get">
+      <select name="searchCondition">
+        <option value="id" th:selected="${memberVO.searchCondition == 'id'}">
+          아이디
+        </option>
+        <option
+          value="name"
+          th:selected="${memberVO.searchCondition == 'name'}"
+        >
+          이름
+        </option>
+      </select>
+      <input
+        type="text"
+        name="searchKeyword"
+        th:value="${memberVO.searchKeyword}"
+        placeholder="검색어를 입력하세요"
+      />
+      <button type="submit">검색</button>
+      <a th:href="@{/admin/members}">초기화</a>
+    </form>
+
+    <table border="1">
+      <tr>
+        <th>아이디</th>
+        <th>이름</th>
+        <th>연락처</th>
+        <th>주소</th>
+        <th>권한</th>
+        <th>가입일</th>
+        <th>탈퇴여부</th>
+      </tr>
+      <tr th:each="member : ${memberList}">
+        <td th:text="${member.memberId}"></td>
+        <td th:text="${member.memberName}"></td>
+        <td th:text="${member.memberTel}"></td>
+        <td th:text="${member.memberAddr}"></td>
+        <td th:text="${member.memberRole}"></td>
+        <td th:text="${member.registDate}"></td>
+        <td th:text="${member.withdrawYn}"></td>
+      </tr>
+    </table>
+
+    <div
+      class="pagination"
+      th:utext="${#egovKrdsPaginationRenderer.renderPagination(paginationInfo, 'linkMemberPage')}"
+    ></div>
+
+    <script>
+      function linkMemberPage(pageNo) {
+        const searchCondition = document.querySelector(
+          'select[name="searchCondition"]',
+        ).value;
+        const searchKeyword = document.querySelector(
+          'input[name="searchKeyword"]',
+        ).value;
+        location.href =
+          "/admin/members?pageIndex=" +
+          pageNo +
+          "&searchCondition=" +
+          searchCondition +
+          "&searchKeyword=" +
+          encodeURIComponent(searchKeyword);
+      }
+    </script>
+  </body>
+</html>

@@ -59,52 +59,5 @@ public class BookController {
 
         return "book/list";
     }
-
-    //도서 등록 페이지(관리자)
-    @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/register")
-    public String registerPage(Model model) {
-        model.addAttribute("bookVO", new BookVO());
-        return "book/register";
-    }
-
-    //도서 등록 처리(관리자)
-    @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/register")
-    public String register(@ModelAttribute BookVO bookVO,
-                           RedirectAttributes redirectAttributes) {
-        bookService.registerBook(bookVO);
-        redirectAttributes.addFlashAttribute("successMsg", "도서가 등록되었습니다.");
-        return "redirect:/book/list";
-    }
-
-    //도서 수정 페이지(관리자)
-    @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/update/{bookNo}")
-    public String updatePage(@PathVariable int bookNo, Model model) {
-        BookVO bookVO = bookService.getBookByNo(bookNo);
-        model.addAttribute("bookVO", bookVO);
-        return "book/update";
-    }
-    
-    //도서 수정 처리(관리자)
-    @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/update")
-    public String update(@ModelAttribute BookVO bookVO,
-                          RedirectAttributes redirectAttributes) {
-        bookService.updateBook(bookVO);
-        redirectAttributes.addFlashAttribute("successMsg", "도서 정보가 수정되었습니다.");
-        return "redirect:/book/list";
-    }
-
-    //도서 삭제 처리(관리자)
-    @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/delete/{bookNo}")
-    public String delete(@PathVariable int bookNo,
-                         RedirectAttributes redirectAttributes) {
-        bookService.deleteBook(bookNo);
-        redirectAttributes.addFlashAttribute("successMsg", "도서가 삭제되었습니다.");
-        return "redirect:/book/list";
-    }
     
 }

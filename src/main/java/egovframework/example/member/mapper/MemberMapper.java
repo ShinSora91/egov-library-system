@@ -1,5 +1,7 @@
 package egovframework.example.member.mapper;
 
+import java.util.List;
+
 import org.apache.ibatis.annotations.Param;
 import org.egovframe.rte.psl.dataaccess.mapper.EgovMapper;
 
@@ -22,4 +24,10 @@ public interface MemberMapper {
 
     //비밀번호 변경
     void updatePassword(MemberVO memberVO);
+
+    //회원 목록 조회
+    List<MemberVO> selectMemberList(MemberVO memberVO);
+
+    //회원 총 개수 조회
+    int selectMemberListToCnt(MemberVO memberVO);
 }

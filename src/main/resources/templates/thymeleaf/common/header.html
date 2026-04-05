@@ -1,0 +1,35 @@
+<!doctype html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+>
+  <body>
+    <div th:fragment="header">
+      <div class="header">
+        <h2>📚 도서 대출 관리 시스템</h2>
+        <div class="header-buttons">
+          <!-- 비로그인 -->
+          <div sec:authorize="isAnonymous()">
+            <a class="btn" th:href="@{/member/login}">로그인</a>
+            <a class="btn" th:href="@{/member/register}">회원가입</a>
+          </div>
+
+          <!-- 로그인 -->
+          <div sec:authorize="isAuthenticated()">
+            <a class="btn" th:href="@{/member/myPage}">마이페이지</a>
+            <a class="btn" sec:authorize="hasRole('ADMIN')" th:href="@{/admin}"
+              >관리자 페이지</a
+            >
+            <form
+              th:action="@{/member/logout}"
+              method="post"
+              style="display: inline"
+            >
+              <button class="btn" type="submit">로그아웃</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

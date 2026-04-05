@@ -1,5 +1,7 @@
 package egovframework.example.member.service;
 
+import java.util.List;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -53,6 +55,16 @@ public class MemberServiceImpl implements MemberService{
         member.setMemberPw(passwordEncoder.encode(newPw));
         memberMapper.updatePassword(member);
         return true;
+    }
+
+    @Override
+    public List<MemberVO> getMemberList(MemberVO memberVO) {
+        return memberMapper.selectMemberList(memberVO);
+    }
+
+    @Override
+    public int getMemberListToCnt(MemberVO memberVO) {
+        return memberMapper.selectMemberListToCnt(memberVO);
     }
 
 }

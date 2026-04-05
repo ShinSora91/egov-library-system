@@ -1,5 +1,7 @@
 package egovframework.example.member.service;
 
+import java.util.List;
+
 import egovframework.example.member.domain.MemberVO;
 
 public interface MemberService {
@@ -19,5 +21,11 @@ public interface MemberService {
     //비밀번호 변경 (현재 비밀번호 확인 후 변경)
     //currentPw: 현재 비밀번호, newPw: 새 비밀번호
     boolean updatePassword(String membdrId, String currentPw, String newPw);
+
+    //회원 목록 조회
+    List<MemberVO> getMemberList(MemberVO memberVO);
+
+    //회원 총 개수 조회
+    int getMemberListToCnt(MemberVO memberVO);
     
 }

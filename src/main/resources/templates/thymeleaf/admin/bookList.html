@@ -1,35 +1,9 @@
 <!doctype html>
 <html xmlns:th="http://www.thymeleaf.org">
   <head>
-    <title>도서 목록</title>
+    <title>도서 관리 (관리자)</title>
     <link rel="stylesheet" th:href="@{/css/pagination.css}" />
     <style>
-      /* 헤더 */
-      .header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        border-bottom: 1px solid #ddd;
-        padding-bottom: 10px;
-        margin-bottom: 20px;
-      }
-      .header-buttons {
-        display: flex;
-        gap: 10px;
-      }
-      .btn {
-        padding: 7px 15px;
-        text-decoration: none;
-        border: 1px solid #333;
-        color: #333;
-        cursor: pointer;
-        background: white;
-      }
-      .btn:hover {
-        background-color: #f0f0f0;
-      }
-
-      /* 테이블 */
       table {
         width: 100%;
         table-layout: fixed;
@@ -37,16 +11,22 @@
       }
       th:nth-child(1) {
         width: 5%;
-      } /* 번호 */
+      }
       th:nth-child(2) {
-        width: 40%;
-      } /* 도서명 - 관리 컬럼 없어졌으니 늘림 */
+        width: 30%;
+      }
       th:nth-child(3) {
-        width: 20%;
-      } /* 저자 */
+        width: 15%;
+      }
       th:nth-child(4) {
+        width: 15%;
+      }
+      th:nth-child(5) {
         width: 20%;
-      } /* 출판사 */
+      }
+      th:nth-child(6) {
+        width: 15%;
+      }
 
       td {
         overflow: hidden;
@@ -56,12 +36,17 @@
     </style>
   </head>
   <body>
-    <!-- 헤더 fragment 삽입 -->
-    <div th:replace="~{common/header :: header}"></div>
+    <h2>도서 관리</h2>
+    <a th:href="@{/admin}">← 대시보드</a>
+    <a th:href="@{/admin/books/register}">도서 등록</a>
 
-    <h2>도서 목록</h2>
+    <div
+      th:if="${successMsg}"
+      style="color: green"
+      th:text="${successMsg}"
+    ></div>
 
-    <form th:action="@{/book/list}" method="get">
+    <form th:action="@{/admin/books}" method="get">
       <select name="searchCondition">
         <option
           value="title"
@@ -89,7 +74,7 @@
         placeholder="검색어를 입력하세요"
       />
       <button type="submit">검색</button>
-      <a th:href="@{/book/list}">초기화</a>
+      <a th:href="@{/admin/books}">초기화</a>
     </form>
 
     <table border="1">
@@ -98,22 +83,40 @@
         <th>도서명</th>
         <th>저자</th>
         <th>출판사</th>
+        <th>등록일</th>
+        <th>관리</th>
       </tr>
       <tr th:each="book : ${bookList}">
         <td th:text="${book.bookNo}"></td>
         <td th:text="${book.bookTitle}"></td>
         <td th:text="${book.bookAuthor}"></td>
         <td th:text="${book.bookPublisher}"></td>
+        <td th:text="${book.registDate}"></td>
+        <td>
+          <a th:href="@{/admin/books/update/{no}(no=${book.bookNo})}">수정</a>
+          <form
+            th:action="@{/admin/books/delete/{no}(no=${book.bookNo})}"
+            method="post"
+            style="display: inline"
+          >
+            <button
+              type="submit"
+              onclick="return confirm('삭제하시겠습니까?');"
+            >
+              삭제
+            </button>
+          </form>
+        </td>
       </tr>
     </table>
 
     <div
       class="pagination"
-      th:utext="${#egovKrdsPaginationRenderer.renderPagination(paginationInfo, 'linkPage')}"
+      th:utext="${#egovKrdsPaginationRenderer.renderPagination(paginationInfo, 'linkAdminBookPage')}"
     ></div>
 
     <script>
-      function linkPage(pageNo) {
+      function linkAdminBookPage(pageNo) {
         const searchCondition = document.querySelector(
           'select[name="searchCondition"]',
         ).value;
@@ -121,7 +124,7 @@
           'input[name="searchKeyword"]',
         ).value;
         location.href =
-          "/book/list?pageIndex=" +
+          "/admin/books?pageIndex=" +
           pageNo +
           "&searchCondition=" +
           searchCondition +
