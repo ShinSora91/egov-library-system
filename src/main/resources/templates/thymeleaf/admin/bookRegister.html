@@ -37,6 +37,11 @@
         <label>출판사:</label>
         <input type="text" th:field="*{bookPublisher}" />
       </div>
+      <div>
+        <label
+          >수량: <input type="number" th:field="*{bookStock}" min="1" value="1"
+        /></label>
+      </div>
       <button type="submit">등록</button>
       <a th:href="@{/admin/books}">취소</a>
     </form>

@@ -13,18 +13,21 @@
         width: 5%;
       }
       th:nth-child(2) {
-        width: 30%;
+        width: 25%;
       }
       th:nth-child(3) {
-        width: 15%;
+        width: 13%;
       }
       th:nth-child(4) {
-        width: 15%;
+        width: 13%;
       }
       th:nth-child(5) {
-        width: 20%;
+        width: 18%;
       }
       th:nth-child(6) {
+        width: 13%;
+      }
+      th:nth-child(7) {
         width: 15%;
       }
 
@@ -84,6 +87,7 @@
         <th>저자</th>
         <th>출판사</th>
         <th>등록일</th>
+        <th>재고</th>
         <th>관리</th>
       </tr>
       <tr th:each="book : ${bookList}">
@@ -92,8 +96,12 @@
         <td th:text="${book.bookAuthor}"></td>
         <td th:text="${book.bookPublisher}"></td>
         <td th:text="${book.registDate}"></td>
+        <td th:text="${book.availableStock} + '/' + ${book.totalStock}"></td>
         <td>
-          <a th:href="@{/admin/books/update/{no}(no=${book.bookNo})}">수정</a>
+          <a
+            th:href="@{/admin/books/update/{no}(no=${book.bookNo}, pageIndex=${bookVO.pageIndex})}"
+            >수정</a
+          >
           <form
             th:action="@{/admin/books/delete/{no}(no=${book.bookNo})}"
             method="post"

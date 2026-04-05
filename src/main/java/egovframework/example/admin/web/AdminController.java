@@ -8,6 +8,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import egovframework.example.book.domain.BookVO;
 import egovframework.example.book.service.BookService;
@@ -118,8 +119,12 @@ public class AdminController {
 
     //도서 수정 페이지
     @GetMapping("/books/update/{bookNo}")
-    public String updatePage(@PathVariable int bookNo, Model model) {
-        model.addAttribute("bookVO", bookService.getBookByNo(bookNo));
+    public String updatePage(@PathVariable int bookNo,
+                             @RequestParam(defaultValue = "1") int pageIndex, 
+                             Model model) {
+        BookVO bookVO = bookService.getBookByNo(bookNo);
+        bookVO.setPageIndex(pageIndex); //현재 페이지 번호 세팅
+        model.addAttribute("bookVO", bookVO);
         return "admin/bookUpdate";
     }
 
@@ -128,8 +133,9 @@ public class AdminController {
     public String update(@ModelAttribute BookVO bookVO,
                          RedirectAttributes redirectAttributes) {
         bookService.updateBook(bookVO);
+        bookService.updateBookStock(bookVO); //재고 업데이트
         redirectAttributes.addFlashAttribute("successMsg", "도서 정보가 수정되었습니다.");
-        return "redirect:/admin/books";
+        return "redirect:/admin/books?pageIndex=" + bookVO.getPageIndex(); //수정 후 페이지 유지
     }
 
     //도서 삭제 처리

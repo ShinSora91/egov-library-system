@@ -12,6 +12,7 @@
       th:object="${bookVO}"
     >
       <input type="hidden" th:field="*{bookNo}" />
+      <input type="hidden" th:field="*{pageIndex}" />
       <div>
         <label>도서명: <input type="text" th:field="*{bookTitle}" /></label>
       </div>
@@ -20,6 +21,15 @@
       </div>
       <div>
         <label>출판사: <input type="text" th:field="*{bookPublisher}" /></label>
+      </div>
+      <div>
+        <!--totalStock을 현재 수량으로 보여주고 bookStock으로 새 수량 입력-->
+        <label>현재 수량: <span th:text="${bookVO.totalStock}"></span>권</label>
+      </div>
+      <div>
+        <label
+          >변경할 수량: <input type="number" th:field="*{bookStock}" min="1"
+        /></label>
       </div>
       <button type="submit">수정</button>
       <a th:href="@{/admin/books}">취소</a>

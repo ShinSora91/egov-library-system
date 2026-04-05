@@ -5,7 +5,8 @@
 <mapper namespace="egovframework.example.book.mapper.BookMapper">
 
     <!--도서 등록-->
-    <insert id="insertBook" parameterType="egovframework.example.book.domain.BookVO">
+    <insert id="insertBook" parameterType="egovframework.example.book.domain.BookVO"
+            useGeneratedKeys="true" keyProperty="bookNo">
         INSERT INTO tb_book (
             book_title,
             book_author,
@@ -38,43 +39,52 @@
 
     <!--도서 단건 조회-->
     <select id="selectBookByNo" resultType="egovframework.example.book.domain.BookVO">
-        SELECT
-            book_no,
-            book_title,
-            book_author,
-            book_publisher,
-            regist_date,
-            delete_yn,
-            delete_date
-        FROM tb_book
-        WHERE book_no = #{bookNo}
-        AND delete_yn = 'N'
+    SELECT
+        b.book_no,
+        b.book_title,
+        b.book_author,
+        b.book_publisher,
+        b.regist_date,
+        b.delete_yn,
+        b.delete_date,
+        COUNT(i.item_no) AS total_stock,
+        SUM(CASE WHEN i.item_status = 'AVAILABLE' THEN 1 ELSE 0 END) AS available_stock
+    FROM tb_book b
+    LEFT JOIN tb_book_item i ON b.book_no = i.book_no AND i.delete_yn = 'N'
+    WHERE b.book_no = #{bookNo}
+    AND b.delete_yn = 'N'
+    GROUP BY b.book_no, b.book_title, b.book_author, b.book_publisher,
+             b.regist_date, b.delete_yn, b.delete_date
     </select>
     
     <!--도서 목록 조회 (검색+페이징)-->
     <select id="selectBookList" resultType="egovframework.example.book.domain.BookVO">
         SELECT
-            book_no,
-            book_title,
-            book_author,
-            book_publisher,
-            regist_date
-        FROM tb_book
-        WHERE delete_yn = 'N'
+            b.book_no,
+            b.book_title,
+            b.book_author,
+            b.book_publisher,
+            b.regist_date,
+            COUNT(i.item_no) AS total_stock,
+            SUM(CASE WHEN i.item_status = 'AVAILABLE' THEN 1 ELSE 0 END) AS available_stock
+        FROM tb_book b
+        LEFT JOIN tb_book_item i ON b.book_no = i.book_no AND i.delete_yn = 'N'
+        WHERE b.delete_yn = 'N'
         <if test="searchKeyword != null and searchKeyword != ''">
             <choose>
                 <when test="searchCondition == 'title'">
-                    AND book_title LIKE CONCAT('%', #{searchKeyword}, '%')
+                    AND b.book_title LIKE CONCAT('%', #{searchKeyword}, '%')
                 </when>
                 <when test="searchCondition == 'author'">
-                    AND book_author LIKE CONCAT('%', #{searchKeyword}, '%')
+                    AND b.book_author LIKE CONCAT('%', #{searchKeyword}, '%')
                 </when>
                 <when test="searchCondition == 'publisher'">
-                    AND book_publisher LIKE CONCAT('%', #{searchKeyword}, '%')
+                    AND b.book_publisher LIKE CONCAT('%', #{searchKeyword}, '%')
                 </when>
             </choose>
         </if>
-        ORDER BY book_no DESC
+        GROUP BY b.book_no, b.book_title, b.book_author, b.book_publisher, b.regist_date
+        ORDER BY b.book_no DESC
         LIMIT #{firstIndex}, #{pageUnit}
     </select>
 
@@ -97,5 +107,21 @@
             </choose>
         </if>
     </select>
+
+    <!--소장 도서 등록-->
+    <insert id="insertBookItem">
+        INSERT INTO tb_book_item (book_no, item_status)
+        VALUES (#{bookNo}, 'AVAILABLE')
+    </insert>
+
+    <!--소장 도서 전체 삭제-->
+    <update id="deleteBookItems">
+        UPDATE tb_book_item
+        SET
+            delete_yn = 'Y', 
+            delete_date = NOW()
+        WHERE book_no = #{bookNo}
+        AND delete_yn = 'N'
+    </update>
 
 </mapper>

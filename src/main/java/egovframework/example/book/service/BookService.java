@@ -22,4 +22,7 @@ public interface BookService {
 
     //도서 총 개수
     int getBookListToCnt(BookVO bookVO);
+
+    //도서 재고 업데이트
+    void updateBookStock(BookVO bookVO);
 }

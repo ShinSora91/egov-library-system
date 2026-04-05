@@ -20,6 +20,10 @@ public class BookVO {
     private String deleteYn = "N";
     private String deleteDate;
 
+    private int bookStock; //등록 시 입력받을 수량
+    private int totalStock; //총 소장 권수
+    private int availableStock; //대출 가능한 권수
+
     //페이징
     private int pageIndex = 1;
     private int pageUnit = 10; //페이지당 개시물 수

@@ -27,4 +27,10 @@ public interface BookMapper {
 
     //도서 총 개수 (페이징용)
     int selectBookListToCnt(BookVO bookVO);
+
+    //소장 도서 등록 (수량만큼 반복)
+    void insertBookItem(@Param("bookNo") int bookNo);
+
+    //소장 도서 전체 삭제 (수정 시 기존 아이템 정리용)
+    void deleteBookItems(@Param("bookNo") int bookNo);
 }

@@ -17,6 +17,11 @@ public class BookServiceImpl implements BookService{
     @Override
     public void registerBook(BookVO bookVO) {
         bookMapper.insertBook(bookVO);
+
+        //수량만큼 tb_book_item에 등록
+        for (int i=0; i<bookVO.getBookNo(); i++) {
+            bookMapper.insertBookItem(bookVO.getBookNo());
+        }
     }
 
     @Override
@@ -42,6 +47,17 @@ public class BookServiceImpl implements BookService{
     @Override
     public int getBookListToCnt(BookVO bookVO) {
         return bookMapper.selectBookListToCnt(bookVO);      
+    }
+
+    @Override
+    public void updateBookStock(BookVO bookVO) {
+        //기존 아이템 전체 삭제
+        bookMapper.deleteBookItems(bookVO.getBookNo());
+
+        //새 수량만큼 재등록
+        for (int i=0; i<bookVO.getBookStock(); i++) {
+            bookMapper.insertBookItem(bookVO.getBookNo());
+        }
     }
     
 }
