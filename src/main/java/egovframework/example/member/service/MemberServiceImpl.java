@@ -67,4 +67,9 @@ public class MemberServiceImpl implements MemberService{
         return memberMapper.selectMemberListToCnt(memberVO);
     }
 
+    @Override
+    public void updateMemberRole(String memberId, String memberRole) {
+        memberMapper.updateMemberRole(memberId, memberRole);
+    }
+
 }

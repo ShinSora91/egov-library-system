@@ -30,4 +30,8 @@ public interface MemberMapper {
 
     //회원 총 개수 조회
     int selectMemberListToCnt(MemberVO memberVO);
+
+    //회원 권한 변경
+    void updateMemberRole(@Param("memberId") String memberId,
+                          @Param("memberRole") String memberRole);
 }

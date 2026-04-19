@@ -19,7 +19,7 @@
         width: 25%;
       }
       th:nth-child(4) {
-        width: 13%;
+        width: 10%;
       }
       th:nth-child(5) {
         width: 15%;
@@ -28,8 +28,9 @@
         width: 15%;
       }
       th:nth-child(7) {
-        width: 15%;
+        width: 18%;
       }
+
       td {
         overflow: hidden;
         text-overflow: ellipsis;
@@ -41,6 +42,10 @@
       }
       .status-returned {
         color: gray;
+      }
+      .status-overdue {
+        color: red;
+        font-weight: bold;
       }
     </style>
   </head>
@@ -91,7 +96,15 @@
         <td th:text="${loan.loanDate}"></td>
         <td th:text="${loan.returnDueDate}"></td>
         <td>
-          <span th:if="${loan.loanStatus == 'LOAN'}" class="status-loan"
+          <span
+            th:if="${loan.loanStatus == 'LOAN' and loan.overdueDays > 0}"
+            class="status-overdue"
+            th:text="'연체 ' + ${loan.overdueDays} + '일'"
+          >
+          </span>
+          <span
+            th:if="${loan.loanStatus == 'LOAN' and loan.overdueDays == 0}"
+            class="status-loan"
             >대출중</span
           >
           <span th:if="${loan.loanStatus == 'RETURNED'}" class="status-returned"

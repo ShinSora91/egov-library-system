@@ -64,17 +64,25 @@
             l.item_no,
             l.loan_status,
             l.loan_date,
-            l.return_due_date,
-            l.return_date,
+            DATE_FORMAT(l.loan_date, '%Y-%m-%d') AS loan_date,
+            DATE_FORMAT(l.return_due_date, '%Y-%m-%d') AS return_due_date,
+            DATE_FORMAT(l.return_date, '%Y-%m-%d') AS return_date,
             b.book_no,
             b.book_title,
             b.book_author,
-            b.book_publisher
+            b.book_publisher,
+            CASE
+                WHEN l.loan_status = 'LOAN' AND l.return_due_date &lt; NOW()
+                THEN DATEDIFF(NOW(), l.return_due_date)
+                ELSE 0
+            END AS overdue_days
         FROM tb_loan l
         JOIN tb_book_item i ON l.item_no = i.item_no
         JOIN tb_book b ON i.book_no = b.book_no
         WHERE l.member_id = #{memberId}
-        ORDER BY l.loan_date DESC
+        ORDER BY
+            CASE WHEN l.loan_status = 'LOAN' THEN 0 ELSE 1 END,
+            l.loan_date DESC
         LIMIT #{firstIndex}, #{pageUnit}
     </select>
 
@@ -110,14 +118,19 @@
             l.member_id,
             l.item_no,
             l.loan_status,
-            l.loan_date,
-            l.return_due_date,
-            l.return_date,
+            DATE_FORMAT(l.loan_date, '%Y-%m-%d %H:%i:%s') AS loan_date,
+            DATE_FORMAT(l.return_due_date, '%Y-%m-%d %H:%i:%s') AS return_due_date,
+            DATE_FORMAT(l.return_date, '%Y-%m-%d %H:%i:%s') AS return_date,
             b.book_no,
             b.book_title,
             b.book_author,
             b.book_publisher,
-            m.member_name
+            m.member_name,
+            CASE
+                WHEN l.loan_status = 'LOAN' AND l.return_due_date &lt; NOW()
+                THEN DATEDIFF(NOW(), l.return_due_date)
+                ELSE 0
+            END AS overdue_days
         FROM tb_loan l
         JOIN tb_book_item i ON l.item_no = i.item_no
         JOIN tb_book b ON i.book_no = b.book_no

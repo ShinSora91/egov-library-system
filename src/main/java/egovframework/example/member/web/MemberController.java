@@ -1,12 +1,19 @@
 package egovframework.example.member.web;
 
+import java.util.List;
+
+import org.egovframe.rte.fdl.property.EgovPropertyService;
+import org.egovframe.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import egovframework.example.loan.domain.LoanVO;
+import egovframework.example.loan.service.LoanService;
 import egovframework.example.member.domain.MemberVO;
 import egovframework.example.member.service.MemberService;
+import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -14,9 +21,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-
-
 
 
 @Controller
@@ -24,7 +28,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 @RequiredArgsConstructor
 public class MemberController {
 
+    @Resource(name = "propertiesService")
+    private EgovPropertyService propertiesService;
+    
     private final MemberService memberService;
+    private final LoanService loanService;
 
     //로그인 페이지
     @GetMapping("/login")
@@ -68,11 +76,34 @@ public class MemberController {
     
     //내 정보 조회 페이지
     @GetMapping("/myPage")
-    public String myPage(Model model) {
+    public String myPage(@ModelAttribute LoanVO loanVO, Model model) {
         //현재 로그인한 사용자 아이디 가져오기
         String memberId = SecurityContextHolder.getContext().getAuthentication().getName();
         MemberVO member = memberService.getMemberById(memberId);
+
+        //페이징  설정
+        loanVO.setMemberId(memberId);
+        loanVO.setPageUnit(propertiesService.getInt("pageUnit"));
+        loanVO.setPageSize(propertiesService.getInt("pageSize"));
+
+        PaginationInfo paginationInfo = new PaginationInfo();
+        paginationInfo.setCurrentPageNo(loanVO.getPageIndex());
+        paginationInfo.setRecordCountPerPage(loanVO.getPageUnit());
+        paginationInfo.setPageSize(loanVO.getPageSize());
+
+        loanVO.setFirstIndex(paginationInfo.getFirstRecordIndex());
+        loanVO.setLastIndex(paginationInfo.getLastRecordIndex());
+        loanVO.setRecordCountPerPage(paginationInfo.getRecordCountPerPage());
+        
+        int toCnt = loanService.getMyLoanListToCnt(loanVO);
+        paginationInfo.setTotalRecordCount(toCnt);
+
+        List<LoanVO> loanList = loanService.getMyLoanList(loanVO);
+
         model.addAttribute("memberVO", member);
+        model.addAttribute("loanList", loanList);
+        model.addAttribute("paginationInfo", paginationInfo);
+        model.addAttribute("loanVO", loanVO);
         return "member/myPage";
     }
     

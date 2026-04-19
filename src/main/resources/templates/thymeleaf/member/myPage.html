@@ -1,9 +1,87 @@
 <!doctype html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+>
   <head>
     <title>내 정보</title>
+    <link rel="stylesheet" th:href="@{/css/pagination.css}" />
+    <style>
+      /* 헤더 */
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+      }
+      .header-buttons {
+        display: flex;
+        gap: 10px;
+      }
+      .btn {
+        padding: 7px 15px;
+        text-decoration: none;
+        border: 1px solid #333;
+        color: #333;
+        cursor: pointer;
+        background: white;
+      }
+      .btn:hover {
+        background-color: #f0f0f0;
+      }
+
+      /* 테이블 */
+      table {
+        width: 100%;
+        table-layout: fixed;
+        border-collapse: collapse;
+        margin-top: 10px;
+      }
+      th:nth-child(1) {
+        width: 5%;
+      }
+      th:nth-child(2) {
+        width: 28%;
+      }
+      th:nth-child(3) {
+        width: 13%;
+      }
+      th:nth-child(4) {
+        width: 17%;
+      }
+      th:nth-child(5) {
+        width: 17%;
+      }
+      th:nth-child(6) {
+        width: 10%;
+      }
+      th:nth-child(7) {
+        width: 10%;
+      }
+      td {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      /* 상태 */
+      .status-loan {
+        color: blue;
+        font-weight: bold;
+      }
+      .status-returned {
+        color: gray;
+      }
+      .status-overdue {
+        color: red;
+        font-weight: bold;
+      }
+    </style>
   </head>
   <body>
+    <div th:replace="~{common/header :: myPageHeader}"></div>
     <h2>내 정보</h2>
 
     <!--회원 정보 수정 폼-->
@@ -56,5 +134,73 @@
       </div>
       <button type="submit">비밀번호 변경</button>
     </form>
+
+    <!--내 대출 현황-->
+    <h3>내 대출 현황</h3>
+    <div th:if="${loanList == null or loanList.size() == 0}">
+      <p>대출 내역이 없습니다.</p>
+    </div>
+
+    <table th:if="${loanList != null and loanList.size() > 0}" border="1">
+      <tr>
+        <th>번호</th>
+        <th>도서명</th>
+        <th>저자</th>
+        <th>대출일</th>
+        <th>반납 예정일</th>
+        <th>상태</th>
+        <th>반납</th>
+      </tr>
+      <tr th:each="loan : ${loanList}">
+        <td th:text="${loan.loanNo}"></td>
+        <td th:text="${loan.bookTitle}"></td>
+        <td th:text="${loan.bookAuthor}"></td>
+        <td th:text="${loan.loanDate}"></td>
+        <td th:text="${loan.returnDueDate}"></td>
+        <td>
+          <!--연체 중-->
+          <span
+            th:if="${loan.loanStatus == 'LOAN' and loan.overdueDays > 0}"
+            class="status-overdue"
+            th:text="'연체 ' + ${loan.overdueDays} + '일'"
+          >
+          </span>
+          <!--대출 중-->
+          <span
+            th:if="${loan.loanStatus == 'LOAN' and loan.overdueDays == 0}"
+            class="status-loan"
+            >대출중</span
+          >
+          <!--반납 완료-->
+          <span th:if="${loan.loanStatus == 'RETURNED'}" class="status-returned"
+            >반납완료</span
+          >
+        </td>
+        <td>
+          <form
+            th:if="${loan.loanStatus == 'LOAN'}"
+            th:action="@{/loan/return/{loanNo}(loanNo=${loan.loanNo})}"
+            method="post"
+          >
+            <button
+              type="submit"
+              onclick="return confirm('반납하시겠습니까?');"
+            >
+              반납
+            </button>
+          </form>
+        </td>
+      </tr>
+    </table>
+    <div
+      class="pagination"
+      th:utext="${#egovKrdsPaginationRenderer.renderPagination(paginationInfo, 'linkMyPage')}"
+    ></div>
+
+    <script>
+      function linkMyPage(pageNo) {
+        location.href = "/member/myPage?pageIndex=" + pageNo;
+      }
+    </script>
   </body>
 </html>

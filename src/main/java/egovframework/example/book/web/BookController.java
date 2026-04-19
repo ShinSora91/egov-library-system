@@ -4,11 +4,9 @@ import java.util.List;
 
 import org.egovframe.rte.fdl.property.EgovPropertyService;
 import org.egovframe.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import egovframework.example.book.domain.BookVO;
 import egovframework.example.book.service.BookService;
@@ -17,8 +15,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 
 
@@ -29,6 +25,7 @@ public class BookController {
     
     @Resource(name = "propertiesService")
     private EgovPropertyService propertiesService;
+
     private final BookService bookService;
 
     //도서 목록 조회

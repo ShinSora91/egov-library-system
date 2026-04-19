@@ -10,26 +10,29 @@
         border-collapse: collapse;
       }
       th:nth-child(1) {
-        width: 12%;
+        width: 10%;
       } /* 아이디 */
       th:nth-child(2) {
-        width: 10%;
+        width: 8%;
       } /* 이름 */
       th:nth-child(3) {
-        width: 13%;
+        width: 11%;
       } /* 연락처 */
       th:nth-child(4) {
-        width: 30%;
+        width: 22%;
       } /* 주소 */
       th:nth-child(5) {
-        width: 8%;
+        width: 7%;
       } /* 권한 */
       th:nth-child(6) {
-        width: 17%;
+        width: 15%;
       } /* 가입일 */
       th:nth-child(7) {
-        width: 10%;
+        width: 8%;
       } /* 탈퇴여부 */
+      th:nth-child(8) {
+        width: 19%;
+      } /* 관리 */
 
       td {
         overflow: hidden;
@@ -41,6 +44,12 @@
   <body>
     <h2>회원 목록</h2>
     <a th:href="@{/admin}">← 대시보드</a>
+
+    <div
+      th:if="${successMsg}"
+      style="color: green"
+      th:text="${successMsg}"
+    ></div>
 
     <form th:action="@{/admin/members}" method="get">
       <select name="searchCondition">
@@ -73,6 +82,7 @@
         <th>권한</th>
         <th>가입일</th>
         <th>탈퇴여부</th>
+        <th>관리</th>
       </tr>
       <tr th:each="member : ${memberList}">
         <td th:text="${member.memberId}"></td>
@@ -82,6 +92,36 @@
         <td th:text="${member.memberRole}"></td>
         <td th:text="${member.registDate}"></td>
         <td th:text="${member.withdrawYn}"></td>
+        <td>
+          <form
+            th:action="@{/admin/members/role}"
+            method="post"
+            style="display: inline"
+          >
+            <input
+              type="hidden"
+              name="memberId"
+              th:value="${member.memberId}"
+            />
+            <select name="memberRole">
+              <option value="USER" th:selected="${member.memberRole == 'USER'}">
+                USER
+              </option>
+              <option
+                value="ADMIN"
+                th:selected="${member.memberRole == 'ADMIN'}"
+              >
+                ADMIN
+              </option>
+            </select>
+            <button
+              type="submit"
+              onclick="return confirm('권한을 변경하시겠습니까?');"
+            >
+              변경
+            </button>
+          </form>
+        </td>
       </tr>
     </table>
 

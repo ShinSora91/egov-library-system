@@ -27,5 +27,8 @@ public interface MemberService {
 
     //회원 총 개수 조회
     int getMemberListToCnt(MemberVO memberVO);
+
+    //회원 권한 변경
+    void updateMemberRole(String memberId, String memberRole);
     
 }

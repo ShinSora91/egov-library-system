@@ -19,6 +19,7 @@ public class LoanVO {
     private String loanDate;
     private String returnDueDate;
     private String returnDate;
+    private int overdueDays; //연체 일수
 
     //조회용 (JOIN)
     private int bookNo;

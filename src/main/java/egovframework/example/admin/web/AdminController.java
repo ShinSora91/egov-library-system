@@ -23,6 +23,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 
 @Controller
@@ -176,4 +178,16 @@ public class AdminController {
 
     return "admin/loanList";
     }
+
+    @PostMapping("/members/role")
+    public String updateMemberRole(@RequestParam String memberId,
+                                   @RequestParam String memberRole,
+                                   RedirectAttributes redirectAttributes) {
+        
+        memberService.updateMemberRole(memberId, memberRole);
+        redirectAttributes.addFlashAttribute("successMsg",
+            memberId + "님의 권한이 " + memberRole + "로 변경되었습니다.");
+        return "redirect:/admin/members";
+    }
+    
 }
