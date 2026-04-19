@@ -63,7 +63,7 @@ public class LoanController {
                              RedirectAttributes redirectAttributes) {
         loanService.returnLoan(loanNo);
         redirectAttributes.addFlashAttribute("successMsg", "반납이 완료되었습니다.");
-        return "redirect:/loan/myList";
+        return "redirect:/member/myPage";
     }   
     
     //내 대출 목록

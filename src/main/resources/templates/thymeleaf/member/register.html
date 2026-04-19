@@ -2,13 +2,21 @@
 <html xmlns:th="http://www.thymeleaf.org">
   <head>
     <title>회원가입</title>
+
+    <!--카카오 우편번호 서비스-->
+    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
   </head>
   <body>
     <h2>회원가입</h2>
 
     <div th:if="${errorMsg}" style="color: red" th:text="${errorMsg}"></div>
 
-    <form th:action="@{/member/register}" method="post" th:object="${memberVO}">
+    <form
+      id="registerForm"
+      th:action="@{/member/register}"
+      method="post"
+      th:object="${memberVO}"
+    >
       <div>
         <label>
           아이디:
@@ -18,38 +26,87 @@
         </label>
       </div>
       <div>
-        <label>비밀번호: <input type="password" th:field="*{memberPw}"/></label>
+        <label
+          >비밀번호: <input type="password" th:field="*{memberPw}"
+        /></label>
       </div>
       <div>
-        <label>이름: <input type="text" th:field="*{memberName}"/></label>
+        <label>이름: <input type="text" th:field="*{memberName}" /></label>
       </div>
       <div>
-        <label>주소: <input type="text" th:field="*{memberAddr}"/></label></label>
+        <label
+          >주소:
+          <input
+            type="text"
+            id="memberAddr"
+            th:field="*{memberAddr}"
+            readonly
+            placeholder="주소 검색 버튼을 클릭하세요"
+          />
+          <button type="button" onclick="searchAddress()">주소 검색</button>
+        </label>
       </div>
       <div>
-        <label>연락처: <input type="text" th:field="*{memberTel}"/></label></label>
+        <label
+          >상세주소:
+          <input
+            type="text"
+            id="memberAddrDetail"
+            placeholder="상세주소를 입력하세요"
+          />
+        </label>
+      </div>
+      <div>
+        <label>연락처: <input type="text" th:field="*{memberTel}" /></label>
       </div>
       <button type="submit">가입하기</button>
     </form>
 
     <script>
-    function checkId() {
-        const memberId = document.getElementById('memberId').value;
-        if (!memberId) {alert('아이디를 입력해주세요.'); return;}
+      // 주소 검색
+      function searchAddress() {
+        new daum.Postcode({
+          oncomplete: function (data) {
+            // 도로명 주소 우선, 없으면 지번 주소
+            var addr = data.roadAddress ? data.roadAddress : data.jibunAddress;
+            document.getElementById("memberAddr").value = addr;
+            document.getElementById("memberAddrDetail").focus();
+          },
+        }).open();
+      }
 
-        fetch('/member/checkId?memberId=' + memberId)
-            .then(res => res.json())
-            .then(duplication => {
-                const msg = document.getElementById('idCheckMsg');
-                if (duplication) {
-                    msg.style.color = 'red';
-                    msg.textContent = '이미 사용 중인 아이디입니다.';
-                } else {
-                    msg.style.color = 'green';
-                    msg.textContent = '사용 가능한 아이디입니다.';
-                }
-            })
-    }
+      // 폼 제출 시 주소 + 상세주소 합치기
+      document
+        .getElementById("registerForm")
+        .addEventListener("submit", function () {
+          var addr = document.getElementById("memberAddr").value;
+          var detail = document.getElementById("memberAddrDetail").value;
+          if (detail) {
+            document.getElementById("memberAddr").value = addr + " " + detail;
+          }
+        });
+
+      // 아이디 중복 체크
+      function checkId() {
+        const memberId = document.getElementById("memberId").value;
+        if (!memberId) {
+          alert("아이디를 입력해주세요.");
+          return;
+        }
+
+        fetch("/member/checkId?memberId=" + memberId)
+          .then((res) => res.json())
+          .then((duplication) => {
+            const msg = document.getElementById("idCheckMsg");
+            if (duplication) {
+              msg.style.color = "red";
+              msg.textContent = "이미 사용 중인 아이디입니다.";
+            } else {
+              msg.style.color = "green";
+              msg.textContent = "사용 가능한 아이디입니다.";
+            }
+          });
+      }
     </script>
   </body>
 </html>
