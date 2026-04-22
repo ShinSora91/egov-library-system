@@ -23,8 +23,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.web.bind.annotation.RequestBody;
-
 
 
 @Controller
@@ -179,6 +177,7 @@ public class AdminController {
     return "admin/loanList";
     }
 
+    //회원 권한 변경
     @PostMapping("/members/role")
     public String updateMemberRole(@RequestParam String memberId,
                                    @RequestParam String memberRole,

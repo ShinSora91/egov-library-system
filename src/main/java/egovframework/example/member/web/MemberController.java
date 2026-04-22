@@ -13,6 +13,7 @@ import egovframework.example.loan.domain.LoanVO;
 import egovframework.example.loan.service.LoanService;
 import egovframework.example.member.domain.MemberVO;
 import egovframework.example.member.service.MemberService;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -68,6 +69,7 @@ public class MemberController {
     }
 
     //아이디 중복 체크 (AJAX)
+    @Operation(hidden = true)
     @GetMapping("/checkId")
     @ResponseBody
     public boolean checkId(@RequestParam String memberId) {
@@ -140,6 +142,5 @@ public class MemberController {
         redirectAttributes.addFlashAttribute("pwSuccessMsg", "비밀번호가 변경되었습니다.");
         return "redirect:/member/myPage";
     }
-    
     
 }
