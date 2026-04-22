@@ -10,28 +10,31 @@
         border-collapse: collapse;
       }
       th:nth-child(1) {
-        width: 10%;
+        width: 9%;
       } /* 아이디 */
       th:nth-child(2) {
-        width: 8%;
+        width: 7%;
       } /* 이름 */
       th:nth-child(3) {
-        width: 11%;
+        width: 10%;
       } /* 연락처 */
       th:nth-child(4) {
-        width: 22%;
+        width: 18%;
       } /* 주소 */
       th:nth-child(5) {
+        width: 12%;
+      } /* 상세주소 */
+      th:nth-child(6) {
         width: 7%;
       } /* 권한 */
-      th:nth-child(6) {
-        width: 15%;
-      } /* 가입일 */
       th:nth-child(7) {
-        width: 8%;
-      } /* 탈퇴여부 */
+        width: 13%;
+      } /* 가입일 */
       th:nth-child(8) {
-        width: 19%;
+        width: 7%;
+      } /* 탈퇴여부 */
+      th:nth-child(9) {
+        width: 17%;
       } /* 관리 */
 
       td {
@@ -79,6 +82,7 @@
         <th>이름</th>
         <th>연락처</th>
         <th>주소</th>
+        <th>상세주소</th>
         <th>권한</th>
         <th>가입일</th>
         <th>탈퇴여부</th>
@@ -89,6 +93,7 @@
         <td th:text="${member.memberName}"></td>
         <td th:text="${member.memberTel}"></td>
         <td th:text="${member.memberAddr}"></td>
+        <td th:text="${member.memberAddrDetail}"></td>
         <td th:text="${member.memberRole}"></td>
         <td th:text="${member.registDate}"></td>
         <td th:text="${member.withdrawYn}"></td>

@@ -16,6 +16,7 @@ public class MemberVO {
     private String memberPw;
     private String memberName;
     private String memberAddr;
+    private String memberAddrDetail;
     private String memberTel;
     private String registDate;
     private String withdrawYn = "N";

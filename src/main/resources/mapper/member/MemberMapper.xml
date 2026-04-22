@@ -11,6 +11,7 @@
             member_pw,
             member_name,
             member_addr,
+            member_addr_detail,
             member_tel,
             withdraw_yn,
             member_role
@@ -19,6 +20,7 @@
             #{memberPw},
             #{memberName},
             #{memberAddr},
+            #{memberAddrDetail},
             #{memberTel},
             #{withdrawYn},
             #{memberRole}
@@ -40,6 +42,7 @@
             member_pw,
             member_name,
             member_addr,
+            member_addr_detail,
             member_tel,
             regist_date,
             withdraw_yn,
@@ -55,6 +58,7 @@
         SET
             member_name = #{memberName},
             member_addr = #{memberAddr},
+            member_addr_detail = #{memberAddrDetail},
             member_tel = #{memberTel}
         WHERE member_id = #{memberId}
     </update>
@@ -72,6 +76,7 @@
             member_id,
             member_name,
             member_addr,
+            member_addr_detail,
             member_tel,
             regist_date,
             withdraw_yn,

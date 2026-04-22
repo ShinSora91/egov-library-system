@@ -134,6 +134,7 @@
           <input
             type="text"
             id="memberAddrDetail"
+            th:field="*{memberAddrDetail}"
             placeholder="상세주소 입력"
           />
         </label>
@@ -262,18 +263,6 @@
           },
         }).open();
       }
-
-      //주소 + 상세주소 합치기
-      document
-        .getElementById("updateForm")
-        .addEventListener("submit", function () {
-          var addr = document.getElementById("memberAddr").value;
-          var detail = document.getElementById("memberAddrDetail").value;
-
-          if (detail) {
-            document.getElementById("memberAddr").value = addr + " " + detail;
-          }
-        });
     </script>
   </body>
 </html>
