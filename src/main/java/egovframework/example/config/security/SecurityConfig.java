@@ -21,10 +21,6 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .csrf(csrf -> csrf.disable())
-            .exceptionHandling(ex -> ex
-                .authenticationEntryPoint((request, respone, authException) -> {
-                    respone.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
-                }))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .requestMatchers("/loan/**").authenticated()
