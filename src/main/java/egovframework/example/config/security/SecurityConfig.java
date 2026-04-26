@@ -8,8 +8,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
 @Configuration
@@ -28,7 +26,9 @@ public class SecurityConfig {
                                  "/member/checkId", "/book/list", "/book/detail/**",
                                  "/book/**", "/css/**", "/js/**",
                                  "/swagger-ui/**", "/swagger-ui.html",
-                                 "/v3/api-docs/**", "/v3/api-docs").permitAll()
+                                 "/v3/api-docs/**", "/v3/api-docs",
+                                 "/chat/**"
+                ).permitAll()
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form
